@@ -24,7 +24,7 @@ const Card = (props:Cards) => {
   };
   return (
     <span className={`card rank-${props.rank} ${props.suit}`}>
-      <span className="rank">{props.rank}</span>
+      <span className="rank">{props.rank.toUpperCase()}</span>
       <span className="suit">{getSymbol(props.suit)}</span>
     </span>
   );

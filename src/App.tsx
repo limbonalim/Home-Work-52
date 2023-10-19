@@ -1,10 +1,9 @@
 import './App.css';
 import Card, {Cards} from './Card/Card';
+import {CardDeck} from './lib/CardDeck';
 
-const value:Cards = {
-  rank: '3',
-  suit: 'hearts',
-}
+const cards = new CardDeck()
+const value:Cards = cards.getCard();
 
 function App() {
   return (
