@@ -3,7 +3,7 @@ import {Card} from './Card';
 export class CardDeck {
   private runks: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'a'];
   private suits: string[] = ['diams', 'hearts', 'clubs', 'spades'];
-  public deck = [];
+  public deck: Card[] = [];
 
   constructor() {
     for (let runk of this.runks) {
@@ -21,7 +21,7 @@ export class CardDeck {
     return cardClone;
   }
 
-  getCards(howMany: number): Card[] {
+  getCards(howMany: number = 5): Card[] {
     let cardsHand: Card[] = [];
     while (cardsHand.length <= howMany) {
       let card = this.getCard();

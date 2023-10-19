@@ -1,11 +1,11 @@
-export interface Cards {
+interface Cards {
   rank: string;
   suit: string;
 }
 
-const Card = (props:Cards) => {
+const Card = (props: Cards) => {
   const getSymbol = (suit) => {
-    let symbol:string;
+    let symbol: string;
     switch (suit) {
       case 'diams':
         symbol = '♦';

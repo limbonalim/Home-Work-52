@@ -1,14 +1,29 @@
 import './App.css';
-import Card, {Cards} from './Card/Card';
+import Card from './Card/Card';
 import {CardDeck} from './lib/CardDeck';
-
-const cards = new CardDeck()
-const value:Cards = cards.getCard();
+import {useState} from 'react';
 
 function App() {
+  const [hand, setHand] = useState([]);
+  const getCardstoTable = () => {
+    const cards = new CardDeck();
+    const myHand = cards.getCards();
+    setHand(myHand);
+  };
+
+  const renderCard = () => {
+    let table: Card[] = [];
+    for (let card of hand) {
+      table.push(<Card rank={card.rank} suit={card.suit}/>);
+    }
+    return table;
+  };
   return (
-    <div className="playingCards">
-      <Card rank={value.rank} suit={value.suit}/>
+    <div>
+      <div className="playingCards">
+        {renderCard()}
+      </div>
+      <button onClick={getCardstoTable}>Раздать карты</button>
     </div>
   );
 }
