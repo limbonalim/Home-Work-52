@@ -1,8 +1,7 @@
 import './App.css';
-import Card from './Card/Card';
+import Card, {Cards} from './Card/Card';
 
-
-const value:Card = {
+const value:Cards = {
   rank: '3',
   suit: 'hearts',
 }

@@ -1,9 +1,9 @@
-interface Card {
+export interface Cards {
   rank: string;
   suit: string;
 }
 
-const Card = ({rank, suit}) => {
+const Card = (props:Cards) => {
   const getSymbol = (suit) => {
     let symbol:string;
     switch (suit) {
@@ -23,11 +23,12 @@ const Card = ({rank, suit}) => {
     return symbol;
   };
   return (
-    <span className={`card rank-${rank} ${suit}`}>
-      <span className="rank">{rank}</span>
-      <span className="suit">{getSymbol(suit)}</span>
+    <span className={`card rank-${props.rank} ${props.suit}`}>
+      <span className="rank">{props.rank}</span>
+      <span className="suit">{getSymbol(props.suit)}</span>
     </span>
   );
 };
 
 export default Card;
+
