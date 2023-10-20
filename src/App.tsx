@@ -2,13 +2,44 @@ import './App.css';
 import Card from './Card/Card';
 import {CardDeck} from './lib/CardDeck';
 import {useState} from 'react';
+import PokerHand from './lib/PokerHand';
+import pokerHand from './lib/PokerHand';
 
 function App() {
-  const [hand, setHand] = useState([]);
+  const [hand, setHand] = useState([
+    {
+      rank: "10",
+      suit: "diams"
+    },
+    {
+      rank: "q",
+      suit: "hearts"
+    },
+    {
+      rank: "5",
+      suit: "hearts"
+    },
+    {
+      rank: "2",
+      suit: "hearts"
+    },
+    {
+      rank: "2",
+      suit: "hearts"
+    },
+    {
+      rank: "6",
+      suit: "hearts"
+    }
+  ]);
+  let test = new PokerHand(hand);
+
   const getCardstoTable = () => {
     const cards = new CardDeck();
     const myHand = cards.getCards();
+    const winCombination = new PokerHand(myHand);
     setHand(myHand);
+    console.log(myHand)
   };
 
   const renderCard = () => {
