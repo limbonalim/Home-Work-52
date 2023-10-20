@@ -8,11 +8,11 @@ import pokerHand from './lib/PokerHand';
 function App() {
   const [hand, setHand] = useState([
     {
-      rank: "10",
+      rank: "3",
       suit: "diams"
     },
     {
-      rank: "q",
+      rank: "a",
       suit: "hearts"
     },
     {
@@ -24,11 +24,11 @@ function App() {
       suit: "hearts"
     },
     {
-      rank: "2",
+      rank: "4",
       suit: "hearts"
     },
     {
-      rank: "6",
+      rank: "j",
       suit: "hearts"
     }
   ]);

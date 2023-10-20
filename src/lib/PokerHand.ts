@@ -10,13 +10,33 @@ interface Suit {
 interface Combination {
   highСard: string;
   pair: string[];
+  subsequence: number[];
   suitCounter: Suit;
+}
+
+const bubbleSort = (arr) => {
+  let len = arr.length;
+  let swapped:boolean;
+
+  do {
+    swapped = false;
+    for (let i = 0; i < len - 1; i++) {
+      if (arr[i] > arr[i + 1]) {
+        let temp = arr[i];
+        arr[i] = arr[i + 1];
+        arr[i + 1] = temp;
+        swapped = true;
+      }
+    }
+  } while (swapped);
+  return arr;
 }
 
 class PokerHand {
   private combination: Combination = {
     highСard: '',
     pair: [],
+    subsequence: [],
     suitCounter: {
       diams: 0,
       hearts: 0,
@@ -26,15 +46,15 @@ class PokerHand {
   };
 
   constructor(public hand) {
-    const ranks = [];
-    const suits = [];
+    const ranks: string[] = [];
+    const suits:string[] = [];
     hand.forEach((card) => {
       ranks.push(card.rank);
       suits.push(card.suit);
     });
 
     this.combination.highСard = this.getHighCard(ranks, suits);
-    console.log(this.combination.highСard);
+    this.getSubsequence(ranks, suits);
     for (let i = 0; i < ranks.length; i++) {
       let rank = ranks[i];
       for (let j = 0; j < ranks.length; j++) {
@@ -61,8 +81,40 @@ class PokerHand {
           break;
       }
     });
-    console.log(this.combination);
+    console.log(this.combination.subsequence[0]);
     console.log(this.getResult());
+  }
+
+  getSubsequence(ranks, suits) {
+    let result: number[] = [];
+    let isHaveA = false;
+    let subsequence = ranks.map(rank => {
+      if (!parseInt(rank)) {
+        switch (rank) {
+          case 'a':
+            isHaveA = true;
+            return 14;
+          case 'k':
+            return 13;
+          case 'q':
+            return 12;
+          case 'j':
+            return 11;
+        }
+      } else {
+        return parseInt(rank);
+      }
+    });
+    subsequence = bubbleSort(subsequence);
+    for (let i = 0; i < subsequence.length; i++) {
+      if (subsequence[i] + 1 === subsequence[i + 1]) {
+        result.push(subsequence[i]);
+      }
+    }
+    if (isHaveA && result[0] === 2) {
+      result.push(14);
+    }
+    this.combination.subsequence = result;
   }
 
   getHighCard(ranks, suits) {
@@ -127,20 +179,28 @@ class PokerHand {
 
   getResult(): string {
     let flash = this.getFlash();
-    if (this.combination.pair.length > 0 && !flash) {
-      if (this.combination.pair.length === 1) {
-        return `Старшая комбинация пара ${this.combination.pair[0].toUpperCase()}`;
-      } else if (this.combination.pair.length === 2 && this.combination.pair[0] !== this.combination.pair[1]) {
-        return `Старшая комбинация две пары ${this.combination.pair[0].toUpperCase()}, ${this.combination.pair[1].toUpperCase()}`;
-      } else if (this.combination.pair.length === 2 && this.combination.pair[0] === this.combination.pair[1]) {
-        return `Старшая комбинация тройка ${this.combination.pair[0].toUpperCase()}`;
-      }
+    if (this.combination.subsequence.length >= 4 && this.combination.subsequence[0] === 10 && flash) {
+      return 'Старшая комбинация Роял-флэш';
+    } else if (this.combination.subsequence.length >= 4 && flash) {
+      return 'Старшая комбинация Стрит-флэш';
+    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2])) {
+      return `Старшая комбинация четверка ${this.combination.pair[0].toUpperCase()}`;
+    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])){
+      return 'Старшая комбинация Фулл-хаус';
+    } else if (this.combination.subsequence.length >= 4 && flash) {
+      return 'Старшая комбинация Флэш';
+    } else if (this.combination.subsequence.length >= 4) {
+      return 'Старшая комбинация Стрит';
+    } else if (this.combination.pair.length === 2 && this.combination.pair[0] === this.combination.pair[1]) {
+      return `Старшая комбинация тройка ${this.combination.pair[0].toUpperCase()}`;
+    } else if (this.combination.pair.length === 2 && this.combination.pair[0] !== this.combination.pair[1]) {
+      return `Старшая комбинация две пары ${this.combination.pair[0].toUpperCase()}, ${this.combination.pair[1].toUpperCase()}`;
+    } else if (this.combination.pair.length === 1) {
+      return `Старшая комбинация пара ${this.combination.pair[0].toUpperCase()}`;
     } else {
-      return `Старшая комбинация Флэш`;
+      return `Старшая карта ${this.combination.highСard}`;
     }
-    return `Старшая карта ${this.combination.highСard}`;
   }
-
 }
 
 export default PokerHand;
