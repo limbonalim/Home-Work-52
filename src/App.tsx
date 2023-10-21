@@ -9,7 +9,7 @@ function App() {
   const [hand, setHand] = useState([
     {
       rank: "3",
-      suit: "diams"
+      suit: "hearts"
     },
     {
       rank: "a",

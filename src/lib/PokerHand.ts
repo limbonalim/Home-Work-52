@@ -7,16 +7,21 @@ interface Suit {
   spades: number;
 }
 
-interface Combination {
-  highСard: string;
-  pair: string[];
+interface Subsequence {
   subsequence: number[];
+  subsequenceSuit: Suit;
+}
+
+interface Combination {
+  highCard: string;
+  pair: string[];
+  subsequence: Subsequence;
   suitCounter: Suit;
 }
 
 const bubbleSort = (arr) => {
   let len = arr.length;
-  let swapped:boolean;
+  let swapped: boolean;
 
   do {
     swapped = false;
@@ -30,13 +35,21 @@ const bubbleSort = (arr) => {
     }
   } while (swapped);
   return arr;
-}
+};
 
 class PokerHand {
   private combination: Combination = {
-    highСard: '',
+    highCard: '',
     pair: [],
-    subsequence: [],
+    subsequence: {
+      subsequence: [],
+      subsequenceSuit: {
+        diams: 0,
+        hearts: 0,
+        clubs: 0,
+        spades: 0,
+      },
+    },
     suitCounter: {
       diams: 0,
       hearts: 0,
@@ -47,13 +60,13 @@ class PokerHand {
 
   constructor(public hand) {
     const ranks: string[] = [];
-    const suits:string[] = [];
+    const suits: string[] = [];
     hand.forEach((card) => {
       ranks.push(card.rank);
       suits.push(card.suit);
     });
 
-    this.combination.highСard = this.getHighCard(ranks, suits);
+    this.combination.highCard = this.getHighCard(ranks, suits);
     this.getSubsequence(ranks, suits);
     for (let i = 0; i < ranks.length; i++) {
       let rank = ranks[i];
@@ -64,30 +77,35 @@ class PokerHand {
         }
       }
     }
+    this.getSuits(suits, this.combination.suitCounter);
+    console.log(this.combination);
+    console.log(this.getResult());
+  }
 
+  getSuits(suits, counter) {
     suits.forEach((suit) => {
       switch (suit) {
         case 'diams':
-          this.combination.suitCounter.diams++;
+          counter.diams++;
           break;
         case 'hearts':
-          this.combination.suitCounter.hearts++;
+          counter.hearts++;
           break;
         case 'clubs':
-          this.combination.suitCounter.clubs++;
+          counter.clubs++;
           break;
         case 'spades':
-          this.combination.suitCounter.spades++;
+          counter.spades++;
           break;
       }
     });
-    console.log(this.combination.subsequence[0]);
-    console.log(this.getResult());
   }
 
   getSubsequence(ranks, suits) {
     let result: number[] = [];
     let isHaveA = false;
+    let indexFromSubsequence: number[] = [];
+    let suitsForSubsequence: string[] = [];
     let subsequence = ranks.map(rank => {
       if (!parseInt(rank)) {
         switch (rank) {
@@ -111,10 +129,39 @@ class PokerHand {
         result.push(subsequence[i]);
       }
     }
+    result.push(result[result.length - 1] + 1);
     if (isHaveA && result[0] === 2) {
       result.push(14);
     }
-    this.combination.subsequence = result;
+    for (let rank of result) {
+      let index: number;
+      if (rank > 10) {
+        let rankClone: string;
+        switch (rank) {
+          case 14:
+            rankClone = 'a';
+            break;
+          case 13:
+            rankClone = 'k';
+            break;
+          case 12:
+            rankClone = 'q';
+            break;
+          case 11:
+            rankClone = 'j';
+            break;
+        }
+        index = ranks.indexOf(rankClone, 0);
+      } else {
+        index = ranks.indexOf(rank.toString(), 0);
+      }
+      indexFromSubsequence.push(index);
+    }
+    for (let index of indexFromSubsequence) {
+      suitsForSubsequence.push(suits[index]);
+    }
+    this.getSuits(suitsForSubsequence, this.combination.subsequence.subsequenceSuit);
+    this.combination.subsequence.subsequence = result;
   }
 
   getHighCard(ranks, suits) {
@@ -125,7 +172,7 @@ class PokerHand {
     ranks.forEach((rank, index) => {
       switch (rank) {
         case 'a':
-          return this.combination.highСard = `${rank} ${getSymbol(suits[index])}`;
+          return this.combination.highCard = `${rank} ${getSymbol(suits[index])}`;
         case 'k':
           if (highCard.rank < 13) {
             highCard.rank = 13;
@@ -154,7 +201,6 @@ class PokerHand {
     });
 
     if (highCard.rank > 10) {
-      let result = '';
       switch (highCard.rank) {
         case 11:
           return `J ${getSymbol(suits[highCard.index])}`;
@@ -168,9 +214,9 @@ class PokerHand {
     }
   }
 
-  getFlash() {
-    for (let suit in this.combination.suitCounter) {
-      if (this.combination.suitCounter[suit] === 5) {
+  getFlash(counter) {
+    for (let suit in counter) {
+      if (counter[suit] === 5) {
         return true;
       }
     }
@@ -178,18 +224,19 @@ class PokerHand {
   }
 
   getResult(): string {
-    let flash = this.getFlash();
-    if (this.combination.subsequence.length >= 4 && this.combination.subsequence[0] === 10 && flash) {
+    let isFlash = this.getFlash(this.combination.suitCounter);
+    let isSubsequenceFlash = this.getFlash(this.combination.subsequence.subsequenceSuit);
+    if (this.combination.subsequence.subsequence.length >= 5 && this.combination.subsequence[0] === 10 && isSubsequenceFlash) {
       return 'Старшая комбинация Роял-флэш';
-    } else if (this.combination.subsequence.length >= 4 && flash) {
+    } else if (this.combination.subsequence.subsequence.length >= 5 && isSubsequenceFlash) {
       return 'Старшая комбинация Стрит-флэш';
     } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2])) {
       return `Старшая комбинация четверка ${this.combination.pair[0].toUpperCase()}`;
-    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])){
+    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])) {
       return 'Старшая комбинация Фулл-хаус';
-    } else if (this.combination.subsequence.length >= 4 && flash) {
+    } else if (this.combination.subsequence.subsequence.length >= 4 && isFlash) {
       return 'Старшая комбинация Флэш';
-    } else if (this.combination.subsequence.length >= 4) {
+    } else if (this.combination.subsequence.subsequence.length >= 5) {
       return 'Старшая комбинация Стрит';
     } else if (this.combination.pair.length === 2 && this.combination.pair[0] === this.combination.pair[1]) {
       return `Старшая комбинация тройка ${this.combination.pair[0].toUpperCase()}`;
@@ -198,7 +245,7 @@ class PokerHand {
     } else if (this.combination.pair.length === 1) {
       return `Старшая комбинация пара ${this.combination.pair[0].toUpperCase()}`;
     } else {
-      return `Старшая карта ${this.combination.highСard}`;
+      return `Старшая карта ${this.combination.highCard}`;
     }
   }
 }
