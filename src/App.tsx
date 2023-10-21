@@ -1,9 +1,8 @@
 import './App.css';
-import Card from './Card/Card';
+import CardRender from './CardRender/CardRender';
 import {CardDeck} from './lib/CardDeck';
 import {useState} from 'react';
 import PokerHand from './lib/PokerHand';
-import pokerHand from './lib/PokerHand';
 import Combination from './Combination/Combination';
 
 function App() {
@@ -19,9 +18,9 @@ function App() {
 
 
   const renderCard = () => {
-    let table: Card[] = [];
+    let table: CardRender[] = [];
     for (let card of hand) {
-      table.push(<Card rank={card.rank} suit={card.suit}/>);
+      table.push(<CardRender rank={card.rank} suit={card.suit}/>);
     }
     return table;
   };

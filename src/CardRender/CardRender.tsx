@@ -21,7 +21,7 @@ export const getSymbol = (suit) => {
   return symbol;
 };
 
-const Card = (props: Cards) => {
+const CardRender = (props: Cards) => {
   return (
     <span className={`card rank-${props.rank} ${props.suit}`}>
       <span className="rank">{props.rank.toUpperCase()}</span>
@@ -30,5 +30,5 @@ const Card = (props: Cards) => {
   );
 };
 
-export default Card;
+export default CardRender;
 

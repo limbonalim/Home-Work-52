@@ -1,4 +1,4 @@
-import {getSymbol} from '../Card/Card';
+import {getSymbol} from '../CardRender/CardRender';
 
 interface Suit {
   diams: number;
@@ -49,7 +49,7 @@ const bubbleSort = (arr) => {
 };
 
 class PokerHand {
-  public combination: Combination = {
+  private combination: Combination = {
     highCard: '',
     pair: [],
     subsequence: {
@@ -82,6 +82,7 @@ class PokerHand {
 
     this.combination.highCard = this.getHighCard(ranks, suits);
     this.getSubsequence(ranks, suits);
+    bubbleSort(ranks);
     for (let i = 0; i < ranks.length; i++) {
       let rank = ranks[i];
       for (let j = 0; j < ranks.length; j++) {
@@ -94,7 +95,7 @@ class PokerHand {
     this.getSuits(suits, this.combination.suitCounter);
   }
 
-  getSuits(suits, counter) {
+  private getSuits(suits, counter) {
     suits.forEach((suit) => {
       switch (suit) {
         case 'diams':
@@ -113,12 +114,12 @@ class PokerHand {
     });
   }
 
-  getSubsequence(ranks, suits) {
+  private getSubsequence(ranks, suits) {
     let result: number[];
     let isHaveA = false;
     let indexFromSubsequence: number[] = [];
     let suitsForSubsequence: string[] = [];
-    let subsequence = ranks.map(rank => {
+    let subsequence = ranks.map((rank) => {
       if (!parseInt(rank)) {
         switch (rank) {
           case 'a':
@@ -172,7 +173,7 @@ class PokerHand {
     this.combination.subsequence.subsequence = result;
   }
 
-  getHighCard(ranks, suits) {
+  private getHighCard(ranks, suits) {
     let highCard = {
       rank: 0,
       index: 0,
@@ -228,7 +229,7 @@ class PokerHand {
     }
   }
 
-  getFlash(counter) {
+  private getFlash(counter) {
     for (let suit in counter) {
       if (counter[suit] === 5) {
         return true;
@@ -244,11 +245,19 @@ class PokerHand {
       return 'Старшая комбинация Роял-флэш';
     } else if (this.combination.subsequence.subsequence.length >= 5 && isSubsequenceFlash) {
       return 'Старшая комбинация Стрит-флэш';
-    } else if (this.combination.pair.length >= 4 && (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2])) {
-      return `Старшая комбинация четверка ${this.combination.pair[0].toUpperCase()}`;
-    } else if (this.combination.pair.length >= 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])) {
-      return 'Старшая комбинация Фулл-хаус';
-    } else if (isFlash) {
+    } else if (this.combination.pair.length >= 3) {
+      if (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2]) {
+        return `Старшая комбинация четверка ${this.combination.pair[0].toUpperCase()}`;
+      } else if (this.combination.pair[1] === this.combination.pair[2] && this.combination.pair[1] === this.combination.pair[3]) {
+        return `Старшая комбинация четверка ${this.combination.pair[1].toUpperCase()}`;
+      } else if (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2] || this.combination.pair[0] === this.combination.pair[3]) {
+        return 'Старшая комбинация Фулл-хаус';
+      } else if (this.combination.pair[1] === this.combination.pair[0] || this.combination.pair[1] === this.combination.pair[2] || this.combination.pair[1] === this.combination.pair[3]) {
+        return 'Старшая комбинация Фулл-хаус';
+      } else {
+        return `Старшая комбинация две пары ${this.combination.pair[0].toUpperCase()}, ${this.combination.pair[1].toUpperCase()}`;
+      }
+    }  else if (isFlash) {
       return 'Старшая комбинация Флэш';
     } else if (this.combination.subsequence.subsequence.length >= 5) {
       return 'Старшая комбинация Стрит';
