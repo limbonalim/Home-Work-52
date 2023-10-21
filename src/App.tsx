@@ -4,43 +4,19 @@ import {CardDeck} from './lib/CardDeck';
 import {useState} from 'react';
 import PokerHand from './lib/PokerHand';
 import pokerHand from './lib/PokerHand';
+import Combination from './Combination/Combination';
 
 function App() {
-  const [hand, setHand] = useState([
-    {
-      rank: "3",
-      suit: "hearts"
-    },
-    {
-      rank: "a",
-      suit: "hearts"
-    },
-    {
-      rank: "5",
-      suit: "hearts"
-    },
-    {
-      rank: "2",
-      suit: "hearts"
-    },
-    {
-      rank: "4",
-      suit: "hearts"
-    },
-    {
-      rank: "j",
-      suit: "hearts"
-    }
-  ]);
-  let test = new PokerHand(hand);
-
-  const getCardstoTable = () => {
+  const [hand, setHand] = useState([]);
+  const [combination, setCombination] = useState('');
+  const getCardsToTable = () => {
     const cards = new CardDeck();
     const myHand = cards.getCards();
     const winCombination = new PokerHand(myHand);
     setHand(myHand);
-    console.log(myHand)
+    setCombination(winCombination.getResult());
   };
+
 
   const renderCard = () => {
     let table: Card[] = [];
@@ -54,7 +30,8 @@ function App() {
       <div className="playingCards">
         {renderCard()}
       </div>
-      <button onClick={getCardstoTable}>Раздать карты</button>
+      <Combination combinationInfo={combination}/>
+      <button onClick={getCardsToTable}>Раздать карты</button>
     </div>
   );
 }

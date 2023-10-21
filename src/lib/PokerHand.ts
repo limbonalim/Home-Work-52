@@ -19,6 +19,17 @@ interface Combination {
   suitCounter: Suit;
 }
 
+const findSubsequence = (subsequence: number[]): number[] => {
+  let result: number[] = [];
+  for (let i = 0; i < subsequence.length; i++) {
+    if (subsequence[i] + 1 === subsequence[i + 1]) {
+      result.push(subsequence[i]);
+    }
+  }
+  result.push(result[result.length - 1] + 1);
+  return result;
+};
+
 const bubbleSort = (arr) => {
   let len = arr.length;
   let swapped: boolean;
@@ -38,7 +49,7 @@ const bubbleSort = (arr) => {
 };
 
 class PokerHand {
-  private combination: Combination = {
+  public combination: Combination = {
     highCard: '',
     pair: [],
     subsequence: {
@@ -59,6 +70,9 @@ class PokerHand {
   };
 
   constructor(public hand) {
+    if (!hand) {
+      return;
+    }
     const ranks: string[] = [];
     const suits: string[] = [];
     hand.forEach((card) => {
@@ -78,8 +92,6 @@ class PokerHand {
       }
     }
     this.getSuits(suits, this.combination.suitCounter);
-    console.log(this.combination);
-    console.log(this.getResult());
   }
 
   getSuits(suits, counter) {
@@ -102,7 +114,7 @@ class PokerHand {
   }
 
   getSubsequence(ranks, suits) {
-    let result: number[] = [];
+    let result: number[];
     let isHaveA = false;
     let indexFromSubsequence: number[] = [];
     let suitsForSubsequence: string[] = [];
@@ -124,12 +136,8 @@ class PokerHand {
       }
     });
     subsequence = bubbleSort(subsequence);
-    for (let i = 0; i < subsequence.length; i++) {
-      if (subsequence[i] + 1 === subsequence[i + 1]) {
-        result.push(subsequence[i]);
-      }
-    }
-    result.push(result[result.length - 1] + 1);
+    result = findSubsequence(subsequence);
+    result = findSubsequence(result);
     if (isHaveA && result[0] === 2) {
       result.push(14);
     }
@@ -172,7 +180,11 @@ class PokerHand {
     ranks.forEach((rank, index) => {
       switch (rank) {
         case 'a':
-          return this.combination.highCard = `${rank} ${getSymbol(suits[index])}`;
+          if (highCard.rank <= 14) {
+            highCard.rank = 14;
+            highCard.index = index;
+          }
+          break;
         case 'k':
           if (highCard.rank < 13) {
             highCard.rank = 13;
@@ -208,6 +220,8 @@ class PokerHand {
           return `Q ${getSymbol(suits[highCard.index])}`;
         case 13:
           return `K ${getSymbol(suits[highCard.index])}`;
+        case 14:
+          return `A ${getSymbol(suits[highCard.index])}`;
       }
     } else {
       return `${highCard.rank} ${getSymbol(suits[highCard.index])}`;
@@ -226,15 +240,15 @@ class PokerHand {
   getResult(): string {
     let isFlash = this.getFlash(this.combination.suitCounter);
     let isSubsequenceFlash = this.getFlash(this.combination.subsequence.subsequenceSuit);
-    if (this.combination.subsequence.subsequence.length >= 5 && this.combination.subsequence[0] === 10 && isSubsequenceFlash) {
+    if (this.combination.subsequence.subsequence.length >= 5 && this.combination.subsequence.subsequence[0] === 10 && isSubsequenceFlash) {
       return 'Старшая комбинация Роял-флэш';
     } else if (this.combination.subsequence.subsequence.length >= 5 && isSubsequenceFlash) {
       return 'Старшая комбинация Стрит-флэш';
-    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2])) {
+    } else if (this.combination.pair.length >= 4 && (this.combination.pair[0] === this.combination.pair[1] && this.combination.pair[0] === this.combination.pair[2])) {
       return `Старшая комбинация четверка ${this.combination.pair[0].toUpperCase()}`;
-    } else if (this.combination.pair.length === 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])) {
+    } else if (this.combination.pair.length >= 3 && (this.combination.pair[0] === this.combination.pair[1] || this.combination.pair[0] === this.combination.pair[2])) {
       return 'Старшая комбинация Фулл-хаус';
-    } else if (this.combination.subsequence.subsequence.length >= 4 && isFlash) {
+    } else if (isFlash) {
       return 'Старшая комбинация Флэш';
     } else if (this.combination.subsequence.subsequence.length >= 5) {
       return 'Старшая комбинация Стрит';
