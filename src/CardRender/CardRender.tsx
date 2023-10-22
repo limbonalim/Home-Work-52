@@ -2,6 +2,7 @@ interface Cards {
   rank: string;
   suit: string;
 }
+
 export const getSymbol = (suit) => {
   let symbol: string;
   switch (suit) {
