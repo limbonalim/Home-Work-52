@@ -6,7 +6,7 @@ import PokerHand from './lib/PokerHand';
 import Combination from './Combination/Combination';
 import {Card} from './lib/Card';
 
-function App() {
+const App = () => {
   const [hand, setHand] = useState([]);
   const [combination, setCombination] = useState('');
   const cardsDeckClone = new CardDeck();
@@ -60,6 +60,6 @@ function App() {
       <button onClick={changeCard}>Поменять карты</button>
     </div>
   );
-}
+};
 
 export default App;
