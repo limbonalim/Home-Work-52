@@ -7,7 +7,7 @@ import Combination from './Combination/Combination';
 import {Card} from './lib/Card';
 
 const App = () => {
-  const [hand, setHand] = useState([]);
+  const [hand, setHand] = useState<Card[]>([]);
   const [combination, setCombination] = useState('');
   const cardsDeckClone = new CardDeck();
   const getCardsToTable = () => {
