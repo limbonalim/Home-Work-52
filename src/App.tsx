@@ -29,9 +29,7 @@ const App = () => {
       let currentHand:Card[] = hand.map(card => {
         return {...card}
       });
-      console.log(currentHand)
       const howMany = 5 - currentHand.length;
-      console.log(howMany);
       let cards = cardsDeckClone.getCards(howMany);
       cards.forEach(card => currentHand.push(card));
       const winCombination = new PokerHand(currentHand);
